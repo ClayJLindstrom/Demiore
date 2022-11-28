@@ -17,8 +17,8 @@ public class CameraScript : MonoBehaviour {
 	void Update () {
 		//camera position
 		Vector3 cameraPlace = playerTransform.position;
-		cameraPlace.y += 5;
-		cameraPlace.z -= 5;
+		//cameraPlace.y += 5;
+		cameraPlace.z -= 10;
 		transform.position = cameraPlace;
 		
 		Vector3 newHealth = playerHealth.localScale;
