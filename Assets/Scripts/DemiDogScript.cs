@@ -12,7 +12,7 @@ public class DemiDogScript : CharacterParent {
 	// Use this for initialization
 	void Start () {
 		transform = GetComponent<Transform>();
-		rb3d = GetComponent<Rigidbody>();
+		rb2d = GetComponent<Rigidbody2D>();
 		theKid = GameObject.Find("Reu").GetComponent<Transform>();
 		anime = gameObject.transform.Find("DogSpriter").GetComponent<Animator>();
 		weapon = gameObject.transform.Find("Claw").GetComponent<Collider>();
@@ -23,8 +23,8 @@ public class DemiDogScript : CharacterParent {
 		health = 25;
 		atk = 10;
 		atkMultiplier = 1;
-		speed = 10; //stalking speed is 5
-		maxSpeed = 2; //stalking max is 1
+		speed = 10f; //stalking speed is 5
+		maxSpeed = 2f; //stalking max is 1
 		boundary = 3f;
 		facingRight = true;
 		atkEnabled = true;
@@ -32,6 +32,7 @@ public class DemiDogScript : CharacterParent {
 	
 	// Update is called once per frame
 	void Update () {
+		newSpeed = rb2d.velocity;
 		//follow
 		float xDif = Mathf.Abs(theKid.position.x - transform.position.x); float zDif = Mathf.Abs(theKid.position.z - transform.position.z);
 		if(xDif > boundary + moon.dogBound || zDif > boundary + moon.dogBound){maxSpeed = 2;}//if(xDif) > boundary + 0.5 || zDif > boundary + 0.5
@@ -39,23 +40,23 @@ public class DemiDogScript : CharacterParent {
 		else{maxSpeed = 0;}
 		if(atkEnabled){speed = 10;}
 		else{speed = 0;}
-		if(transform.position.x > theKid.position.x && maxSpeed != 0){
+		if(transform.position.x > theKid.position.x && maxSpeed != 0f){//go left
 			facingRight = false;
-			if(rb3d.velocity.x < -maxSpeed){float z = rb3d.velocity.z; rb3d.velocity = new Vector3(-maxSpeed,0f,z);}
-			else{rb3d.AddForce(-speed,0f,0f);}
+			if(rb2d.velocity.x < -maxSpeed){newSpeed.x = -maxSpeed;}
+			else { newSpeed.x -= speed * Time.deltaTime; }
 		}
-		if(transform.position.x < theKid.position.x && maxSpeed != 0){
+		if(transform.position.x < theKid.position.x && maxSpeed != 0f){//go right
 			facingRight = true;
-			if(rb3d.velocity.x > maxSpeed){float z = rb3d.velocity.z; rb3d.velocity = new Vector3(maxSpeed,0f,z);}
-			else{rb3d.AddForce(speed,0f,0f);}
+			if(rb2d.velocity.x > maxSpeed){newSpeed.x = maxSpeed;}
+			else { newSpeed.x += speed * Time.deltaTime; }
 		}
-		if(transform.position.z > theKid.position.z && maxSpeed != 0){
-			if(rb3d.velocity.z < -maxSpeed){float x = rb3d.velocity.x; rb3d.velocity = new Vector3(x,0f,-maxSpeed);}
-			else{rb3d.AddForce(0f,0f,-speed);}
+		if(transform.position.y > theKid.position.y && maxSpeed != 0f){//go up
+			if(rb2d.velocity.y < -maxSpeed){newSpeed.y = -maxSpeed;}
+			else { newSpeed.y -= speed * Time.deltaTime; }
 		}
-		if(transform.position.z < theKid.position.z && maxSpeed != 0){
-			if(rb3d.velocity.z > maxSpeed){float x = rb3d.velocity.x; rb3d.velocity = new Vector3(x,0f,maxSpeed);}
-			else{rb3d.AddForce(0f,0f,speed);}
+		if(transform.position.y < theKid.position.y && maxSpeed != 0f){// go down
+			if(rb2d.velocity.y > maxSpeed){newSpeed.y = maxSpeed;}
+			else { newSpeed.y += speed * Time.deltaTime; }
 		}
 		
 		//attack
@@ -79,6 +80,7 @@ public class DemiDogScript : CharacterParent {
 				else if(transform.position.z > theKid.position.z){anime.SetInteger("Direction", 1);}//down
 			}
 		}
+		rb2d.velocity = newSpeed;
 	}
 	
 	void FixedUpdate(){

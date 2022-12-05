@@ -11,7 +11,7 @@ public class ReuController : CharacterParent {
 	// Use this for initialization
 	void Start () {
 		transform = GetComponent<Transform>();
-		rb3d = GetComponent<Rigidbody>();
+		rb2d = GetComponent<Rigidbody2D>();
 		anime = gameObject.transform.Find("Spriter").GetComponent<Animator>();
 		demoHit = gameObject.transform.Find("DemoAttack").GetComponent<Collider>();
 		hitGleam = gameObject.transform.Find("DemoAttack").GetComponentInChildren<SpriteRenderer>();
@@ -34,31 +34,36 @@ public class ReuController : CharacterParent {
 	
 	// Update is called once per frame
 	void Update () {
+		newSpeed = rb2d.velocity;
 		if(atkEnabled){
 			if(Input.GetKey(KeyCode.I)){
 				anime.SetInteger("Direction", 2);
 				hitAt.x = 0f; hitAt.z = 0.5f;//hit point
-				if(rb3d.velocity.z > maxSpeed){float x = rb3d.velocity.x; rb3d.velocity = new Vector3(x,0,maxSpeed);}
-				else{rb3d.AddForce(0,0,speed);}
+				if(rb2d.velocity.y > maxSpeed){newSpeed.y = maxSpeed;}
+				else{ newSpeed.y += speed * Time.deltaTime; }
 			}
 			if(Input.GetKey(KeyCode.J)){
 				anime.SetInteger("Direction", 0); facingRight = false;
 				hitAt.x = 0.25f; hitAt.z = 0f;
-				if(rb3d.velocity.x < -maxSpeed){float z = rb3d.velocity.z; rb3d.velocity = new Vector3(-maxSpeed,0,z);}
-				else{rb3d.AddForce(-speed,0,0);}
+				if(rb2d.velocity.x < -maxSpeed){newSpeed.x = -maxSpeed;}
+				else { newSpeed.x -= speed * Time.deltaTime; }
 			}
 			if((Input.GetKey(KeyCode.K) && !controls2)||(Input.GetKey(KeyCode.M) && controls2)){
 				anime.SetInteger("Direction", 1);
 				hitAt.x = 0f; hitAt.z = -0.5f;//hit point
-				if(rb3d.velocity.z < -maxSpeed){float x = rb3d.velocity.x; rb3d.velocity = new Vector3(x,0,-maxSpeed);}
-				else{rb3d.AddForce(0,0,-speed);}
+				if(rb2d.velocity.y < -maxSpeed){newSpeed.y = -maxSpeed;}
+				else { newSpeed.y -= speed * Time.deltaTime; }
 			}
 			if((Input.GetKey(KeyCode.L) && !controls2)||(Input.GetKey(KeyCode.K) && controls2)){
 				anime.SetInteger("Direction", 0); facingRight = true;
 				hitAt.x = 0.25f; hitAt.z = 0f;
-				if(rb3d.velocity.x > maxSpeed){float z = rb3d.velocity.z; rb3d.velocity = new Vector3(maxSpeed,0,z);}
-				else{rb3d.AddForce(speed,0,0);}
-			}
+				if(rb2d.velocity.x > maxSpeed){newSpeed.x = maxSpeed;}
+				else { newSpeed.x += speed * Time.deltaTime; }
+            }
+            if(!Input.GetKey(KeyCode.I) && !Input.GetKey(KeyCode.J) && !Input.GetKey(KeyCode.K) && !Input.GetKey(KeyCode.L))
+            {
+				SlowDown(1);
+            }
 		}
 		
 		if(Input.GetKey(KeyCode.F) && atkEnabled){
@@ -84,6 +89,7 @@ public class ReuController : CharacterParent {
 				
 			}
 		}
+		rb2d.velocity = newSpeed;
 	}
 	
 	void FixedUpdate(){
