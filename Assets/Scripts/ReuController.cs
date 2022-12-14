@@ -59,11 +59,16 @@ public class ReuController : CharacterParent {
 				hitAt.x = 0.25f; hitAt.z = 0f;
 				if(rb2d.velocity.x > maxSpeed){newSpeed.x = maxSpeed;}
 				else { newSpeed.x += speed * Time.deltaTime; }
-            }
-            if(!Input.GetKey(KeyCode.I) && !Input.GetKey(KeyCode.J) && !Input.GetKey(KeyCode.K) && !Input.GetKey(KeyCode.L))
+			}
+			//slowing our character down!
+            if(!Input.GetKey(KeyCode.J) && !Input.GetKey(KeyCode.L))
             {
-				SlowDown(1);
-            }
+				SlowDownX(1);
+			}
+			if (!Input.GetKey(KeyCode.I) && !Input.GetKey(KeyCode.K))
+			{
+				SlowDownY(1);
+			}
 		}
 		
 		if(Input.GetKey(KeyCode.F) && atkEnabled){
@@ -106,6 +111,7 @@ public class ReuController : CharacterParent {
 		// flip
 		if(transform.localScale.x > 0 && !facingRight){Flip();}
 		if(transform.localScale.x < 0 && facingRight){Flip();}
+		if (newSpeed != Vector2.zero) { CorrectZ(); }//each time they move, we need to correct their z-axis.
 	}
 	
 	public override void GotHit(){

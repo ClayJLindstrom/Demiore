@@ -9,7 +9,6 @@ public class NodeMap : MonoBehaviour
     //our Nodes
     private Node[,] neighborhood;
 
-
     //our Nodes
     private class Node
     {

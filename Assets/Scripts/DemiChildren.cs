@@ -2,17 +2,15 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class DemiChildren : MonoBehaviour {
-	private Transform transform, reu;
-	private Animator anime;
+public class DemiChildren : CharacterParent {
+	private Transform reu;
 	private Button btn;
 	private ReuController reusHealth;
 	//text box
 	private Image textImage, terahSprite, reuSprite;
 	private Text theText;
 	
-	public float health, speed, maxSpeed;
-	public bool facingRight, talking;
+	public bool talking;
 
 	// Use this for initialization
 	void Start () {
@@ -33,6 +31,9 @@ public class DemiChildren : MonoBehaviour {
 		maxSpeed = 1;//using this for threshold
 		facingRight = true;
 		talking = false;
+
+		//for Z-correcting (to potentially be changed later.
+		//CorrectZ();
 	}
 	
 	// Update is called once per frame
@@ -81,11 +82,6 @@ public class DemiChildren : MonoBehaviour {
 		if(transform.localScale.x < 0 && facingRight){Flip();}
 	}
 	
-	public void Flip(){
-		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
-		transform.localScale = theScale;
-	}
 	
 	public void Respond(){
 		if(!talking){

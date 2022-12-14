@@ -34,7 +34,7 @@ public class DemiDogScript : CharacterParent {
 	void Update () {
 		newSpeed = rb2d.velocity;
 		//follow
-		float xDif = Mathf.Abs(theKid.position.x - transform.position.x); float zDif = Mathf.Abs(theKid.position.z - transform.position.z);
+		float xDif = Mathf.Abs(theKid.position.x - transform.position.x); float zDif = Mathf.Abs(theKid.position.y - transform.position.z);
 		if(xDif > boundary + moon.dogBound || zDif > boundary + moon.dogBound){maxSpeed = 2;}//if(xDif) > boundary + 0.5 || zDif > boundary + 0.5
 		else if(xDif < boundary - moon.dogBound && zDif < boundary - moon.dogBound && Mathf.Sqrt((xDif * xDif) + (zDif * zDif)) > 1){maxSpeed = 1;}
 		else{maxSpeed = 0;}
@@ -62,11 +62,11 @@ public class DemiDogScript : CharacterParent {
 		//attack
 		if(Mathf.Sqrt((xDif * xDif) + (zDif * zDif)) < 1 && atkEnabled){
 			Vector3 weaponAt = new Vector3(0,0,0);
-			if(xDif > zDif){weaponAt.x = 0.3f; weaponAt.z = 0;}
+			if(xDif > zDif){weaponAt.x = 0.3f; weaponAt.y = 0;}
 			else{
 				weaponAt.x = 0f;
-				if(transform.position.z < theKid.position.z){weaponAt.z = 0.3f;}//down
-				else if(transform.position.z > theKid.position.z){weaponAt.z = -0.3f;}//up
+				if(transform.position.y < theKid.position.y){weaponAt.y = 0.3f;}//down
+				else if(transform.position.y > theKid.position.y){weaponAt.y = -0.3f;}//up
 			}
 			weapon.gameObject.GetComponent<Transform>().localPosition = weaponAt;
 			StartCoroutine(LionSlash());
@@ -82,15 +82,21 @@ public class DemiDogScript : CharacterParent {
 		}
 		rb2d.velocity = newSpeed;
 	}
-	
-	void FixedUpdate(){
+
+	void FixedUpdate()
+	{
 		// Flip
-		if(atkEnabled){
-			if(transform.localScale.x > 0 && !facingRight){Flip();}
-			if(transform.localScale.x < 0 && facingRight){Flip();}
+		if (atkEnabled)
+		{
+			if (transform.localScale.x > 0 && !facingRight) { Flip(); }
+			if (transform.localScale.x < 0 && facingRight) { Flip(); }
 		}
 		//dead
-		if(health <= 0 || moon.day){Dead(); moon.dogs -= 1;}
+		if (health <= 0 || moon.day) { Dead(); moon.dogs -= 1; }
+		if (newSpeed != Vector2.zero)
+		{
+			CorrectZ();//each time they move, we need to correct their z-axis.
+		}
 	}
 	
 	IEnumerator LionSlash(){
