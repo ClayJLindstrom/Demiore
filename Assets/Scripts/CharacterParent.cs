@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.iOS;
 
 public class CharacterParent : MonoBehaviour {
 	protected Transform transform;
@@ -8,7 +9,7 @@ public class CharacterParent : MonoBehaviour {
 	protected Animator anime;
 	protected Collider2D feet;
 	
-	public bool attackCooled, facingRight, grounded;
+	public bool atkEnabled, attackCooled, facingRight, grounded;
 	public float health, speed, maxSpeed, atk, atkMultiplier;
 	public Vector2 newSpeed;//for easy alteration of the speed.
 
@@ -109,6 +110,59 @@ public class CharacterParent : MonoBehaviour {
 			else if (newSpeed.y > 0) { newSpeed.y -= speed * Time.deltaTime * multiplier; }
 			else if (newSpeed.y < 0) { newSpeed.y += speed * Time.deltaTime * multiplier; }
 			rb2d.velocity = newSpeed;
+		}
+	}
+
+	//the player taps on the screen, and this is where the player goes.
+	//This will also use the SlowDown functions above.
+	public virtual void MoveTowards(Vector3 location)
+    {
+		//getting the xy distances from the target
+		Vector2 displacement = location - transform.position;
+		//to get the hypotenuse distance from the target
+		float distance = Vector2.Distance(location, transform.position);
+		if(distance == 0) { distance = 0.001f; }
+		//Now, to know how much we need to increase the 
+
+		//for our max velocity y, it's maxSpeed * Mathf.Abs(y/hyp) * y/MAthf.Abs(y)
+		//								max speed,	our ratio,		positive/negative.
+
+		//OH! we'll add some friction!
+		//if we're too fast in the Y-direction,
+		if (Mathf.Abs(rb2d.velocity.y) > maxSpeed * Mathf.Abs(displacement.y / distance)){
+			//decelerate y-wise.
+			SlowDownY(speed);
+        }
+        else
+		{
+			newSpeed.y += speed * Time.deltaTime * (displacement.y / distance);
+		}
+
+		//if we're too fast in the Y-direction,
+		if (Mathf.Abs(rb2d.velocity.x) > maxSpeed * Mathf.Abs(displacement.x / distance)){
+			//decelerate y-wise.
+			SlowDownX(speed);
+		}
+		else
+		{
+			newSpeed.x += speed * Time.deltaTime * (displacement.x / distance);
+		}
+		//facing left or right.
+		if(displacement.x < 0) { facingRight = false; }
+        else { facingRight = true; }
+	}
+
+	public void UpdateAnimeDirection()
+    {
+		//animator
+		if (atkEnabled)
+		{
+			if (rb2d.velocity.x > rb2d.velocity.y) { anime.SetInteger("Direction", 0); }//side
+			else
+			{
+				if (rb2d.velocity.y > 0) { anime.SetInteger("Direction", 2); }//up
+				else{ anime.SetInteger("Direction", 1); }//down
+			}
 		}
 	}
 }

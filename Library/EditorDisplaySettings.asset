@@ -45,7 +45,7 @@ MonoBehaviour:
     displayName: Main Display
     displayId: 1
     enabled: 1
-    mode: 1
+    mode: 0
     viewWindowTitle: Game
     playModeViewSettings:
       rid: 6620720512110952449

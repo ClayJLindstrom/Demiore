@@ -7,7 +7,6 @@ public class DemiDogScript : CharacterParent {
 	private BoardManager moon;
 	public Transform theKid;
 	public float boundary;
-	public bool atkEnabled;
 
 	// Use this for initialization
 	void Start () {
@@ -40,7 +39,8 @@ public class DemiDogScript : CharacterParent {
 		else{maxSpeed = 0;}
 		if(atkEnabled){speed = 10;}
 		else{speed = 0;}
-		if(transform.position.x > theKid.position.x && maxSpeed != 0f){//go left
+		MoveTowards(theKid.position);
+		/*if(transform.position.x > theKid.position.x && maxSpeed != 0f){//go left
 			facingRight = false;
 			if(rb2d.velocity.x < -maxSpeed){newSpeed.x = -maxSpeed;}
 			else { newSpeed.x -= speed * Time.deltaTime; }
@@ -57,7 +57,7 @@ public class DemiDogScript : CharacterParent {
 		if(transform.position.y < theKid.position.y && maxSpeed != 0f){// go down
 			if(rb2d.velocity.y > maxSpeed){newSpeed.y = maxSpeed;}
 			else { newSpeed.y += speed * Time.deltaTime; }
-		}
+		}*/
 		
 		//attack
 		if(Mathf.Sqrt((xDif * xDif) + (zDif * zDif)) < 1 && atkEnabled){
@@ -71,15 +71,16 @@ public class DemiDogScript : CharacterParent {
 			weapon.gameObject.GetComponent<Transform>().localPosition = weaponAt;
 			StartCoroutine(LionSlash());
 		}
-		
+
 		//animator
-		if(atkEnabled){
+		/*if(atkEnabled){
 			if(xDif > zDif){anime.SetInteger("Direction", 0);}//side
 			else{
 				if(transform.position.z < theKid.position.z){anime.SetInteger("Direction", 2);}//up
 				else if(transform.position.z > theKid.position.z){anime.SetInteger("Direction", 1);}//down
 			}
-		}
+		}*/
+		UpdateAnimeDirection();
 		rb2d.velocity = newSpeed;
 	}
 

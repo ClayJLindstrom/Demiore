@@ -2,15 +2,17 @@
 using System.Collections;
 
 public class ReuController : CharacterParent {
+	private Vector3 destination; 
 	private Vector3 hitAt;
 	private Collider demoHit;
 	private SpriteRenderer hitGleam, boxProjectile;
 	public float HStrLv, boxAmmo;
-	public bool atkEnabled, controls2;
+	public bool controls2;
 
 	// Use this for initialization
 	void Start () {
 		transform = GetComponent<Transform>();
+		destination = Vector3.zero;
 		rb2d = GetComponent<Rigidbody2D>();
 		anime = gameObject.transform.Find("Spriter").GetComponent<Animator>();
 		demoHit = gameObject.transform.Find("DemoAttack").GetComponent<Collider>();
@@ -34,40 +36,58 @@ public class ReuController : CharacterParent {
 	
 	// Update is called once per frame
 	void Update () {
+        if (Input.touchCount > 0)
+        {
+			Debug.Log("TouchCount activated!");
+        }
+
 		newSpeed = rb2d.velocity;
 		if(atkEnabled){
+			if(destination != null)
+            {
+				MoveTowards(destination);
+				UpdateAnimeDirection();
+				if (Vector3.Distance(transform.position, destination) <= 0.125f)
+                {
+					transform.position = destination;
+                }
+            }
 			if(Input.GetKey(KeyCode.I)){
 				anime.SetInteger("Direction", 2);
 				hitAt.x = 0f; hitAt.z = 0.5f;//hit point
-				if(rb2d.velocity.y > maxSpeed){newSpeed.y = maxSpeed;}
-				else{ newSpeed.y += speed * Time.deltaTime; }
+				/*if(rb2d.velocity.y > maxSpeed){newSpeed.y = maxSpeed;}
+				else{ newSpeed.y += speed * Time.deltaTime; }*/
+				MoveTowards(Vector3.up + transform.position);
 			}
 			if(Input.GetKey(KeyCode.J)){
 				anime.SetInteger("Direction", 0); facingRight = false;
 				hitAt.x = 0.25f; hitAt.z = 0f;
-				if(rb2d.velocity.x < -maxSpeed){newSpeed.x = -maxSpeed;}
-				else { newSpeed.x -= speed * Time.deltaTime; }
+				//if(rb2d.velocity.x < -maxSpeed){newSpeed.x = -maxSpeed;}
+				//else { newSpeed.x -= speed * Time.deltaTime; }
+				MoveTowards(Vector3.left + transform.position);
 			}
 			if((Input.GetKey(KeyCode.K) && !controls2)||(Input.GetKey(KeyCode.M) && controls2)){
 				anime.SetInteger("Direction", 1);
 				hitAt.x = 0f; hitAt.z = -0.5f;//hit point
-				if(rb2d.velocity.y < -maxSpeed){newSpeed.y = -maxSpeed;}
-				else { newSpeed.y -= speed * Time.deltaTime; }
+											  //if(rb2d.velocity.y < -maxSpeed){newSpeed.y = -maxSpeed;}
+											  //else { newSpeed.y -= speed * Time.deltaTime; }
+				MoveTowards(Vector3.down + transform.position);
 			}
 			if((Input.GetKey(KeyCode.L) && !controls2)||(Input.GetKey(KeyCode.K) && controls2)){
 				anime.SetInteger("Direction", 0); facingRight = true;
 				hitAt.x = 0.25f; hitAt.z = 0f;
-				if(rb2d.velocity.x > maxSpeed){newSpeed.x = maxSpeed;}
-				else { newSpeed.x += speed * Time.deltaTime; }
+				//if(rb2d.velocity.x > maxSpeed){newSpeed.x = maxSpeed;}
+				//else { newSpeed.x += speed * Time.deltaTime; }
+				MoveTowards(Vector3.right + transform.position);
 			}
 			//slowing our character down!
             if(!Input.GetKey(KeyCode.J) && !Input.GetKey(KeyCode.L))
             {
-				SlowDownX(1);
+				//SlowDownX(1);
 			}
 			if (!Input.GetKey(KeyCode.I) && !Input.GetKey(KeyCode.K))
 			{
-				SlowDownY(1);
+				//SlowDownY(1);
 			}
 		}
 		
