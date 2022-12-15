@@ -152,12 +152,16 @@ public class CharacterParent : MonoBehaviour {
         else { facingRight = true; }
 	}
 
+	// Animation Directions
+	// 0 = side
+	// 1 = front
+	// 2 = back
 	public void UpdateAnimeDirection()
     {
 		//animator
 		if (atkEnabled)
 		{
-			if (rb2d.velocity.x > rb2d.velocity.y) { anime.SetInteger("Direction", 0); }//side
+			if (Mathf.Abs(rb2d.velocity.x) > Mathf.Abs(rb2d.velocity.y)) { anime.SetInteger("Direction", 0); }//side
 			else
 			{
 				if (rb2d.velocity.y > 0) { anime.SetInteger("Direction", 2); }//up
@@ -166,8 +170,3 @@ public class CharacterParent : MonoBehaviour {
 		}
 	}
 }
-
-// Animation Directions
-// 0 = side
-// 1 = front
-// 2 = back

@@ -12,7 +12,7 @@ public class ReuController : CharacterParent {
 	// Use this for initialization
 	void Start () {
 		transform = GetComponent<Transform>();
-		destination = Vector3.zero;
+		destination = new Vector3(12, 11, 0f);// = transform.position
 		rb2d = GetComponent<Rigidbody2D>();
 		anime = gameObject.transform.Find("Spriter").GetComponent<Animator>();
 		demoHit = gameObject.transform.Find("DemoAttack").GetComponent<Collider>();
@@ -43,14 +43,15 @@ public class ReuController : CharacterParent {
 
 		newSpeed = rb2d.velocity;
 		if(atkEnabled){
-			if(destination != null)
+			if(Vector2.Distance(destination, transform.position) >= 0.125f)
             {
+				Debug.Log(Vector2.Distance(destination, transform.position));
 				MoveTowards(destination);
 				UpdateAnimeDirection();
-				if (Vector3.Distance(transform.position, destination) <= 0.125f)
-                {
-					transform.position = destination;
-                }
+            }
+            else
+            {
+				SlowDown(speed);
             }
 			if(Input.GetKey(KeyCode.I)){
 				anime.SetInteger("Direction", 2);
@@ -147,9 +148,11 @@ public class ReuController : CharacterParent {
 		demoHit.enabled = false;
 		atkEnabled = true;
 	}
+
+	void OnMouseUp()
+    {
+		Debug.Log(Event.current.mousePosition);
+    }
+
 }
 
-// Animation Directions
-// 0 = side
-// 1 = front
-// 2 = back
