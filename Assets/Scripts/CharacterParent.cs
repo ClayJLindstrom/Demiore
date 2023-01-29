@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.iOS;
+using UnityEngine.EventSystems;
 
 public class CharacterParent : MonoBehaviour {
 	protected Transform transform;
@@ -8,6 +9,8 @@ public class CharacterParent : MonoBehaviour {
 	protected Rigidbody2D rb2d;
 	protected Animator anime;
 	protected Collider2D feet;
+	//for handling different actions that require set times.
+	protected Coroutine currentCoro;
 	
 	public bool atkEnabled, attackCooled, facingRight, grounded;
 	public float health, speed, maxSpeed, atk, atkMultiplier;
@@ -32,12 +35,12 @@ public class CharacterParent : MonoBehaviour {
 		transform.localScale = theScale;
 	}
 	
-	public void Dead(){
+	public virtual void Dead(){
 		Destroy(gameObject);
 	}
 	
-	public virtual void GotHit(){
-		
+	public virtual void GotHit(float damage){
+		health -= damage;
 	}
 
 	public void CorrectZ()

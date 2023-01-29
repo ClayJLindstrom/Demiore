@@ -12,7 +12,7 @@ public class ZCorrect : MonoBehaviour
         //we'll have the z-axis be equal to 10% the y-axis.
         newPose.z = newPose.y / 10;
         transform.position = newPose;
-        Debug.Log("All good");
+        //Debug.Log("All good");
     }
 
     // Update is called once per frame

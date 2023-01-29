@@ -14,7 +14,8 @@ public class DemiChildren : CharacterParent {
 
 	// Use this for initialization
 	void Start () {
-		transform = GetComponent<Transform>();
+		//transform = GetComponent<Transform>();
+		rectTransform = GetComponent<RectTransform>();
 		reu = GameObject.Find("Reu").GetComponent<Transform>();
 		anime = GetComponentInChildren<Animator>();
 		btn = GetComponent<Button>();
@@ -23,9 +24,9 @@ public class DemiChildren : CharacterParent {
 		//text box
 		terahSprite = GameObject.Find("TerahSprite").GetComponent<Image>();
 		reuSprite = GameObject.Find("ReuSprite").GetComponent<Image>();
-		theText = GameObject.Find("Main Camera").GetComponentInChildren<Text>();
-		textImage = GameObject.Find("Main Camera").GetComponentInChildren<Image>();
-		
+		theText = GameObject.Find("Canvas").GetComponentInChildren<Text>();
+		textImage = GameObject.Find("Canvas").transform.Find("TextBox").GetComponent<Image>();
+
 		health = 0;//using for direction
 		speed = 0;//using this for pattern
 		maxSpeed = 1;//using this for threshold
@@ -33,7 +34,7 @@ public class DemiChildren : CharacterParent {
 		talking = false;
 
 		//for Z-correcting (to potentially be changed later.
-		//CorrectZ();
+		CorrectRectZ();
 	}
 	
 	// Update is called once per frame

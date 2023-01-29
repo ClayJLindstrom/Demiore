@@ -6,22 +6,25 @@ public class ReuController : CharacterParent {
 	private Vector3 hitAt;
 	private Collider demoHit;
 	private SpriteRenderer hitGleam, boxProjectile;
-	public float HStrLv, boxAmmo;
+	private CameraScript theCamera;
+	public float HStrLv, boxAmmo, maxHealth, origMaxHealth;
 	public bool controls2;
 
 	// Use this for initialization
 	void Start () {
 		transform = GetComponent<Transform>();
-		destination = new Vector3(12, 11, 0f);// = transform.position
+		destination = transform.position;// = transform.position
 		rb2d = GetComponent<Rigidbody2D>();
 		anime = gameObject.transform.Find("Spriter").GetComponent<Animator>();
 		demoHit = gameObject.transform.Find("DemoAttack").GetComponent<Collider>();
 		hitGleam = gameObject.transform.Find("DemoAttack").GetComponentInChildren<SpriteRenderer>();
 		boxProjectile = gameObject.transform.Find("BoxSprite").GetComponent<SpriteRenderer>();
+		theCamera = Camera.main.GetComponent<CameraScript>();
 		demoHit.enabled = false;
 		hitGleam.enabled = false;
 		boxProjectile.enabled = false;
 		health = 90;
+		maxHealth = origMaxHealth = health;
 		speed = 10;
 		maxSpeed = 2;
 		atk = 5;
@@ -36,16 +39,12 @@ public class ReuController : CharacterParent {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.touchCount > 0)
-        {
-			Debug.Log("TouchCount activated!");
-        }
-
+		OnMouseUp();
 		newSpeed = rb2d.velocity;
 		if(atkEnabled){
 			if(Vector2.Distance(destination, transform.position) >= 0.125f)
             {
-				Debug.Log(Vector2.Distance(destination, transform.position));
+				//Debug.Log(Vector2.Distance(destination, transform.position));
 				MoveTowards(destination);
 				UpdateAnimeDirection();
             }
@@ -135,7 +134,8 @@ public class ReuController : CharacterParent {
 		if (newSpeed != Vector2.zero) { CorrectZ(); }//each time they move, we need to correct their z-axis.
 	}
 	
-	public override void GotHit(){
+	public override void GotHit(float damage){
+		health -= damage;
 	}
 	
 	IEnumerator DemoHit(){
@@ -149,9 +149,30 @@ public class ReuController : CharacterParent {
 		atkEnabled = true;
 	}
 
+	//this is when clicking the actual person, not just anywhere.
 	void OnMouseUp()
     {
-		Debug.Log(Event.current.mousePosition);
+        if (Input.GetMouseButton(0))
+        {
+			//SetDestination(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0));
+			//SetDestination(Camera.main.cameraToWorldMatrix.MultiplyPoint(Vector3.back));
+			SetDestination(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0)));
+			//Debug.Log(Input.GetAxis("Horizontal"));
+		}
+		else if (Input.GetMouseButtonUp(0))
+        {
+			SetDestination(transform.position);
+        }
+    }
+
+	public void SetDestination(Vector3 theDes)
+    {
+		destination = theDes;
+    }
+
+	public override void Dead()
+    {
+
     }
 
 }
