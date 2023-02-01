@@ -77,16 +77,16 @@ public class DDogLeader : DemiDogScript
 				//currentPath = moon.TracePath(transform.position, theKid.position);
 
 			}
-			if(currentPath == null)
-			{
-				//Debug.Log("Null Path");
-				//find it!
-				//looking for the player
-
-				//currentCoro = StartCoroutine(NewPath(3f, theKid.position));
-				currentPath = moon.TracePath(transform.position, theKid.position);
+			if (currentPath == null || currentPath.Count < 1) { 
+				currentPath = moon.TracePath(transform.position, theKid.position); 
+				Debug.Log(currentPath.Count);
+				//if the path only gave us one node, and the player isn't around.
+				if(currentPath.Count < 2){
+					//reset the queen's path, and then try again!
+					moon.ResetQueensPath(theKid.position);
+					currentPath = moon.TracePath(transform.position, theKid.position); 
+				}
 			}
-			else if (currentPath.Count < 1) { currentPath = moon.TracePath(transform.position, theKid.position); }
 			//if we have our heading
 			else
 			{
@@ -98,7 +98,7 @@ public class DDogLeader : DemiDogScript
 				}
 				else
 				{
-					MoveTowards(currentPath[currentPath.Count - 1]);
+					MoveTowards2(currentPath[currentPath.Count - 1]);
 				}
 			}
 		}

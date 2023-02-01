@@ -155,6 +155,40 @@ public class CharacterParent : MonoBehaviour {
         else { facingRight = true; }
 	}
 
+	//for when the regular MoveTowards doesn't work (Ex. when the dogs navigate the nodemap maze.)
+	public virtual void MoveTowards2(Vector3 location){
+		//getting the xy distances from the target
+		Vector2 displacement = location - transform.position;
+		//Now, to know how much we need to increase the 
+
+		//for our max velocity y, it's maxSpeed * Mathf.Abs(y/hyp) * y/MAthf.Abs(y)
+		//								max speed,	our ratio,		positive/negative.
+
+		//OH! we'll add some friction!
+		//if we're too fast in the Y-direction,
+		if (Mathf.Abs(rb2d.velocity.y) > maxSpeed){
+			//Reset y-speed
+			newSpeed.y = maxSpeed * (displacement.y/Mathf.Abs(displacement.y));//the last part to get the negative value we need.
+        }
+        else
+		{
+			newSpeed.y += speed * Time.deltaTime * (displacement.y/Mathf.Abs(displacement.y));;
+		}
+
+		//if we're too fast in the Y-direction,
+		if (Mathf.Abs(rb2d.velocity.x) > maxSpeed){
+			//reset x-speed
+			newSpeed.x = maxSpeed * (displacement.x/Mathf.Abs(displacement.x));
+		}
+		else
+		{
+			newSpeed.x += speed * Time.deltaTime * (displacement.x/Mathf.Abs(displacement.x));
+		}
+		//facing left or right.
+		if(displacement.x < 0) { facingRight = false; }
+        else { facingRight = true; }
+	}
+
 	// Animation Directions
 	// 0 = side
 	// 1 = front

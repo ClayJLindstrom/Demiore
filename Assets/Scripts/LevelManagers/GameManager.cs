@@ -78,8 +78,14 @@ public class GameManager : MonoBehaviour {
 		return day;
     }
 
+	//for finding our path from pointA to pointB
 	public virtual List<Vector2> TracePath(Vector3 start, Vector3 finish)
     {
 		return nodeMap.TracePath(start, finish);
     }
+
+	//for resetting our Queen's Path.
+	public virtual void ResetQueensPath(Vector3 thePlayer){
+        nodeMap.SetQueensPath(thePlayer);
+	}
 }

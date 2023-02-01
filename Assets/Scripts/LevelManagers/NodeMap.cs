@@ -123,7 +123,7 @@ public class NodeMap : MonoBehaviour
     private void AddEdge(Node one, Node two)
     {
         neighborCheck = Physics2D.Linecast(one.ReturnLocation(), two.ReturnLocation());
-        if (!neighborCheck || neighborCheck.collider.gameObject.tag == "Player")
+        if (!neighborCheck || neighborCheck.collider.gameObject.tag == "Player" || neighborCheck.collider.gameObject.tag == "BadGuy")
         {
             one.AddEdge(new Neighbor(two, Vector2.Distance(one.ReturnLocation(), two.ReturnLocation())));
             //In theory, we would want it going both ways, but with how the code works, it just duplicates in bridges.
