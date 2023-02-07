@@ -16,12 +16,14 @@ using UnityEngine;
  * - 4.5. We can take inspiration from Lego Battles, where the minifigs first try going straight to the player, then when stuck, then
  * they trace a path using the nodemap. (It would still be smart to use the group programming where a group of dogs follow a leader.
  * Let's even have the Leader's position be added to the follower's current paths with each step so they can follow her.
- * 
+ * 5. Cache function: Make a library of all possible paths, so that all the loading is done pre-game.
  */
 
 public class NodeMap : MonoBehaviour
 {
     //Now for our Nodemap's variables!
+    //our cache library.
+    private Dictionary<string, Vector2[]> cacheMap;
     //our Nodes
     private Node[,] neighborhood;
     private List<Node> uncheckedNodes = new List<Node>();
@@ -197,23 +199,21 @@ public class NodeMap : MonoBehaviour
                 }
             }
         }
-        /*/an error's going on with the neighbor nodes. 
-        Debug.Log("Node on bottom left's neighbors");
-        foreach (Neighbor nodes in neighborhood[0, 0].ReturnNeighbors())
-        {
-            if(nodes != null)//ckecking for this may be the issue, as the arrays are size 9, and not all of them are filled.
-            {
-                Debug.Log(nodes.ReturnNode().ReturnLocation());
-            }
-        }
-        Debug.Log("Node in the middle");
-        foreach (Neighbor nodes in neighborhood[15, 15].ReturnNeighbors())
-        {
-            if (nodes != null)//ckecking for this may be the issue, as the arrays are size 9, and not all of them are filled.
-            {
-                Debug.Log(nodes.ReturnNode().ReturnLocation());
-            }
-        }//*/
+    }
+
+    private void ConstructCache(){
+        //for keeping track of what nodes are already done.
+        List<Node> cacheNodes = new List<Node>();
+        //for each row of nodes,
+            //for each column,
+                //add all of our already checked nodes back into the checkedNodes list.
+                //perform our queen's path again, except,
+                //for each of the nodes we visit,
+                    //add its path back to the parent to the cachemap.
+                    //Note: We will keep track of all the nodes that have already been through this loop,
+                    //likely by keeping them in a different list to keep track of.
+                
+                //reset map before continuing to the next one.
     }
 
     //should work in most cases, except for row/columns of size one.
@@ -355,13 +355,61 @@ public class NodeMap : MonoBehaviour
     //first, for setting our parent values. (All ways are the "Queen's way" - Cheshire Cat)
     public void SetQueensPath(Vector3 startingPos)
     {
-        Debug.Log("Queen's Path Set");
         //first, we get our starting node, the queen.
         Node current = FindClosest(startingPos);
-        Debug.Log(current.GiveNeighborCount());//FIX: Returns Zero.  Why?!
-        //Node end = FindClosest(endingPos); not needed.
         //first, we reset our checkedNodes list and uncheckedNodes list.
-        ResetMap();
+        //ResetMap();//not really needed.
+        uncheckedNodes.Add(current);
+        //we do this for every node everywhere, even though we may not need to.
+        do{
+            checkedNodes.Add(current);
+            if (uncheckedNodes.Contains(current)) { uncheckedNodes.Remove(current); }
+            //add all of the nodes connected to it that are not on the closed list to the open list
+            //also, set this node as the parent of all the nodes addd to the open list.
+            foreach (Neighbor nodes in current.ReturnNeighbors())
+            {
+                //Debug.Log("going Through Neighbors!");
+                //if we haven't checked it, or we have and it's a shorter path
+                if (nodes != null)
+                {
+                    if (!checkedNodes.Contains(nodes.ReturnNode())
+                        && nodes.ReturnNode().GiveWeight() < current.GiveWeight() + nodes.Weight())
+                    {
+                        //update the parent
+                        nodes.ReturnNode().SetParent(current);
+                        //update the weight
+                        nodes.ReturnNode().SetWeight(current.GiveWeight() + nodes.Weight());
+                        //add the node to the unchecked list.
+                        uncheckedNodes.Add(nodes.ReturnNode());
+                    }
+                }
+            }
+            //then, we will calculate the next node to check, and repeat the cycle
+            //find our next Node.
+            if (uncheckedNodes.Count > 0)
+            {
+                current = uncheckedNodes[0];
+                foreach (Node aNode in uncheckedNodes)
+                {
+                    if (aNode.GiveWeight() < current.GiveWeight()) { current = aNode; }
+                }
+            }
+        }while (uncheckedNodes.Count > 0);
+        //we should now have our parents set up. Now any creature can access the map and trace a path.
+        //to see if we're setting parents or not.
+        foreach(Node check in checkedNodes){
+            if(check.GetParent() != null){Debug.Log("yes");}
+            else{Debug.Log("No");}
+        }
+    }
+    
+    ////This one is to be worked on with our cache function, taking a node as a parameter.
+    private void SetQueensPath(Node startingPos)
+    {
+        //first, we get our starting node, the queen.
+        Node current = startingPos;
+        //first, we reset our checkedNodes list and uncheckedNodes list.
+        //ResetMap();//not really needed.
         uncheckedNodes.Add(current);
         //we do this for every node everywhere, even though we may not need to.
         do{
@@ -437,4 +485,36 @@ public class NodeMap : MonoBehaviour
         //now we can return our path!
         return path;
     }
+
+    ////This goes with our cache function.
+    private List<Vector2> TraceQueensPath(Node startingPos){
+        Debug.Log("Queen's Path Traced");
+        //We get our closest Node.
+        Node current = startingPos;
+        //for constructing our path.
+        List<Vector2> path = new List<Vector2>();
+        path.Add(current.ReturnLocation());
+        //while the path continues (there is a parent to the current node.)
+        while (current.GetParent() != null)
+        {
+            //move to the next one!
+            current = current.GetParent();
+            //record this one's location
+            path.Add(current.ReturnLocation());
+        }
+        Debug.Log(path);
+        Debug.Log(path.Count);
+        //we need to reverse the path, since the monsters travel the path from the bottom to the top.
+        path.Reverse();
+        //now we can return our path!
+        return path;
+    }
 }
+
+
+/*
+For that cache function, how will we organize it?
+both the beginning and ending node have a unique combination of xy coordinates, or rather, [x][y] index variables
+So, by crafting a string with these variables, we should be able to make a key for each path while including doubles.
+ex. [x][y] to [x2][y2] could be x.y.x2.y2, or x-y-x2-y2
+*/
