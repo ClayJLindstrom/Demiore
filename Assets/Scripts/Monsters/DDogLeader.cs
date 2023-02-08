@@ -79,7 +79,7 @@ public class DDogLeader : DemiDogScript
 			}
 			if (currentPath == null || currentPath.Count < 1) { 
 				currentPath = moon.TracePath(transform.position, theKid.position); 
-				Debug.Log(currentPath.Count);
+				//Debug.Log(currentPath.Count);
 				//if the path only gave us one node, and the player isn't around.
 				if(currentPath.Count < 2){
 					//reset the queen's path, and then try again!
