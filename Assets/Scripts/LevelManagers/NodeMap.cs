@@ -136,12 +136,12 @@ public class NodeMap : MonoBehaviour
 
 
     //for Crafting our nodemap
-    public NodeMap(Vector2 the_position, float x_length, float y_length, int x_count, int y_count)
+    public NodeMap(Vector2 the_position, float x_l, float y_l, int x_count, int y_count)
     {
         x_length = x_count;
         y_length = y_count;
-        float n_distance_x = x_length / x_count, n_distance_y = y_length / y_count;
-        float x_start = -(x_length / 2), y_start = -y_length / 2;
+        float n_distance_x = x_l / x_count, n_distance_y = y_l / y_count;
+        float x_start = -(x_l / 2), y_start = -y_l / 2;
         //make our appropriately-sized neighborhood map
         neighborhood = new Node[x_count, y_count];
         //for every column
@@ -200,6 +200,7 @@ public class NodeMap : MonoBehaviour
             }
         }
         //now for the kicker!
+        //Debug.Log(x_length);
         ConstructCache();
         Debug.Log(cacheMap);
         foreach(KeyValuePair<string, Vector2[]> entry in cacheMap){
@@ -216,6 +217,7 @@ public class NodeMap : MonoBehaviour
         for(int x = 0; x < x_length; x++){
             //for each node in a row,
             for(int y = 0; y < y_length; y++){
+                //Debug.Log(x.ToString() + "/" + y.ToString());
                 //add all of our already checked nodes back into the checkedNodes list.
                 foreach(Node aNode in cacheNodes){
                     checkedNodes.Add(aNode);
@@ -245,9 +247,17 @@ public class NodeMap : MonoBehaviour
                                 nodes.ReturnNode().SetWeight(current.GiveWeight() + nodes.Weight());
                                 //add the node to the unchecked list to check later.
                                 uncheckedNodes.Add(nodes.ReturnNode());
-                                //Here is also where we calculate the Node's path and add it to the Cache Dictionary.
-                                cacheMap.Add(x.ToString()+"."+y.ToString()+"."+nodes.ReturnNode().ReturnLocation().x.ToString()+"."+nodes.ReturnNode().ReturnLocation().y.ToString() ,TraceCachePath(nodes.ReturnNode()));
                             }
+                        }
+                    }
+                    //then, to add a path to our list.
+                    if(current != neighborhood[x,y]){
+                        //Here is also where we calculate the Node's path and add it to the Cache Dictionary.
+                        //Debug.Log("Adding Node At: " + current.ReturnLocation().ToString());
+                        string key = neighborhood[x, y].ReturnLocation().x.ToString()+"."+neighborhood[x, y].ReturnLocation().y.ToString()+"."+
+                            current.ReturnLocation().x.ToString()+"."+current.ReturnLocation().y.ToString();
+                        if(!cacheMap.ContainsKey(key)){
+                            cacheMap.Add(key ,TraceCachePath(current));
                         }
                     }
                     //then, we will calculate the next node to check, and repeat the cycle
@@ -543,7 +553,6 @@ public class NodeMap : MonoBehaviour
 
     ////This goes with our cache function.
     private Vector2[] TraceCachePath(Node startingPos){
-        Debug.Log("Queen's Path Traced");
         //We get our closest Node.
         Node current = startingPos;
         //for constructing our path.
@@ -565,6 +574,44 @@ public class NodeMap : MonoBehaviour
             thePathArray[i] = path[i];
         }
         return thePathArray;
+    }
+
+    //using the cacheMap, we set the values of one of the arrays to a list and return it.
+    public List<Vector2> FindCachePath(Vector3 startingPos, Vector3 endingPos)
+    {
+        //first, we get our starting and ending nodes
+        Node start = FindClosest(startingPos);
+        //Debug.Log(current.ReturnLocation());
+        Node end = FindClosest(endingPos);
+        //Debug.Log(end.ReturnLocation());
+        //for our final path.
+        List<Vector2> path = new List<Vector2>();
+        string key = start.ReturnLocation().x.ToString()+"."+start.ReturnLocation().y.ToString()+"."+
+                end.ReturnLocation().x.ToString()+"."+end.ReturnLocation().y.ToString();
+        //if the key isn't correct
+        if(!cacheMap.ContainsKey(key)){
+            //switch the start-end positions
+            key = end.ReturnLocation().x.ToString()+"."+end.ReturnLocation().y.ToString()+"."+
+                start.ReturnLocation().x.ToString()+"."+start.ReturnLocation().y.ToString();
+            //if we still don't have this path,
+            if(!cacheMap.ContainsKey(key)){
+                Debug.Log("No Path Exists");
+                return null;
+            }
+        }
+
+        foreach(Vector2 place in cacheMap[key]){
+            //Let's see if things work now or not.
+            path.Add(place);
+        }
+
+        
+        Debug.Log(path);
+        Debug.Log(path.Count);
+        //now we have our path. Now it's time to reset our nodes.
+        ResetMap();
+        //now we can return our path!
+        return path;
     }
 }
 

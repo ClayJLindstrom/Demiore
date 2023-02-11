@@ -11,7 +11,7 @@ public class MazeManager : GameManager
     void Start()
     {
         //the node map (Vector2 the_position, float x_length, float y_length, int x_count, int y_count)
-        nodeMap = new NodeMap(Vector2.zero, 30, 30, 30, 30);
+        nodeMap = new NodeMap(Vector2.zero, 30, 30, 15, 15);
         InitialStart();
         demiDog = Resources.Load("DemiDogLeader");
         //dogSpawns
@@ -59,6 +59,6 @@ public class MazeManager : GameManager
 
 	public override List<Vector2> TracePath(Vector3 start, Vector3 finish)
     {
-		return nodeMap.TraceQueensPath(start);
+		return nodeMap.FindCachePath(start, finish);
     }
 }
