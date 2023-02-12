@@ -344,7 +344,6 @@ public class NodeMap : MonoBehaviour
     //for traversing our nodemap
     public List<Vector2> TracePath(Vector3 startingPos, Vector3 endingPos)
     {
-        Debug.Log("Wrong Path Traced");
         //first, we get our starting and ending nodes
         Node current = FindClosest(startingPos);
         //Debug.Log(current.ReturnLocation());
@@ -584,6 +583,7 @@ public class NodeMap : MonoBehaviour
         //Debug.Log(current.ReturnLocation());
         Node end = FindClosest(endingPos);
         //Debug.Log(end.ReturnLocation());
+        bool needToReverse = false;
         //for our final path.
         List<Vector2> path = new List<Vector2>();
         string key = start.ReturnLocation().x.ToString()+"."+start.ReturnLocation().y.ToString()+"."+
@@ -593,16 +593,22 @@ public class NodeMap : MonoBehaviour
             //switch the start-end positions
             key = end.ReturnLocation().x.ToString()+"."+end.ReturnLocation().y.ToString()+"."+
                 start.ReturnLocation().x.ToString()+"."+start.ReturnLocation().y.ToString();
+            needToReverse = true;
             //if we still don't have this path,
             if(!cacheMap.ContainsKey(key)){
-                Debug.Log("No Path Exists");
-                return null;
+                Debug.Log("No Path Exists between {0} and {1}");//, start.ReturnLocation(), end.ReturnLocation());
+                //how about we add this key, then? Though it should've been able to do it anyway.
+                return TracePath(startingPos, endingPos);
             }
         }
 
         foreach(Vector2 place in cacheMap[key]){
             //Let's see if things work now or not.
             path.Add(place);
+        }
+        //if we need to reverse the path
+        if(needToReverse){
+            path.Reverse();
         }
 
         

@@ -73,19 +73,12 @@ public class DDogLeader : DemiDogScript
 				//find it!
 				//looking for the player
 
-				//currentCoro = StartCoroutine(NewPath(3f, theKid.position));//switched to Queen's path
+				currentCoro = StartCoroutine(NewPath(3f, theKid.position));
 				//currentPath = moon.TracePath(transform.position, theKid.position);
 
 			}
 			if (currentPath == null || currentPath.Count < 1) { 
 				currentPath = moon.TracePath(transform.position, theKid.position); 
-				//Debug.Log(currentPath.Count);
-				//if the path only gave us one node, and the player isn't around.
-				if(currentPath.Count < 2){
-					//reset the queen's path, and then try again!
-					moon.ResetQueensPath(theKid.position);
-					currentPath = moon.TracePath(transform.position, theKid.position); 
-				}
 			}
 			//if we have our heading
 			else
@@ -115,11 +108,11 @@ public class DDogLeader : DemiDogScript
 		UpdateAnimeDirection();
 		rb2d.velocity = newSpeed;
 	}
-	/*//Trying a different approach
+	//Trying a different approach
 	public IEnumerator NewPath(float seconds, Vector3 newPos)
     {
 		yield return new WaitForSeconds(seconds);
 		currentPath = moon.TracePath(transform.position, newPos);
 		currentCoro = null;
-	}*/
+	}
 }
