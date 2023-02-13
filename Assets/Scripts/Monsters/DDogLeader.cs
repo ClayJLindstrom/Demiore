@@ -85,7 +85,7 @@ public class DDogLeader : DemiDogScript
 			{
 				//Debug.Log("Following Path!");
 				//here we go!
-				if (Vector2.Distance(transform.position, currentPath[currentPath.Count - 1]) < 1)
+				if (Vector2.Distance(transform.position, currentPath[currentPath.Count - 1]) < 0.1f)
 				{
 					currentPath.Remove(currentPath[currentPath.Count - 1]);
 				}

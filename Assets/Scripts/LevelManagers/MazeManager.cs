@@ -11,7 +11,7 @@ public class MazeManager : GameManager
     void Start()
     {
         //the node map (Vector2 the_position, float x_length, float y_length, int x_count, int y_count)
-        nodeMap = new NodeMap(Vector2.zero, 30, 30,16, 16);
+        nodeMap = new NodeMap(new Vector2(2, 2), 32, 32, 16, 16);
         InitialStart();
         demiDog = Resources.Load("DemiDogLeader");
         //dogSpawns

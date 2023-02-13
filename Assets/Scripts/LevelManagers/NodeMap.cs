@@ -34,9 +34,17 @@ public class NodeMap : MonoBehaviour
     //for counting column/row length
     private int x_length, y_length;
 
+    //For seeing where our Nodes are
+    private Object edge = Resources.Load("EdgeMarker");
+    private GameObject theEdge;
+
     //our Nodes
     private class Node
     {
+        //for seeing where our nodes are.
+        private Object marker = Resources.Load("NodeMarker");
+        private GameObject theMarker;
+
         private Vector2 location;
         private Neighbor[] neighbors = new Neighbor[8];//max of 9 neighbors
         //to keep track of parents
@@ -53,6 +61,7 @@ public class NodeMap : MonoBehaviour
             location = loc;
             weight = 0;
             parent = null;
+            theMarker = (GameObject)Instantiate(marker, loc, Quaternion.identity);
         }
         //edges
         public void AddEdge(Neighbor new_neighbor)
@@ -130,6 +139,7 @@ public class NodeMap : MonoBehaviour
             one.AddEdge(new Neighbor(two, Vector2.Distance(one.ReturnLocation(), two.ReturnLocation())));
             //In theory, we would want it going both ways, but with how the code works, it just duplicates in bridges.
             //two.AddEdge(new Neighbor(one, Vector2.Distance(one.ReturnLocation(), two.ReturnLocation())));
+            theEdge = (GameObject)Instantiate(edge, (one.ReturnLocation() + two.ReturnLocation())/2, Quaternion.identity);
         }
     }
 
@@ -219,9 +229,9 @@ public class NodeMap : MonoBehaviour
             for(int y = 0; y < y_length; y++){
                 //Debug.Log(x.ToString() + "/" + y.ToString());
                 //add all of our already checked nodes back into the checkedNodes list.
-                foreach(Node aNode in cacheNodes){
+                /*foreach(Node aNode in cacheNodes){
                     checkedNodes.Add(aNode);
-                }
+                }*/
                 //perform our queen's path again, except,
                 //first, we get our starting node, the queen.
                 current = neighborhood[x, y];
