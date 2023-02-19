@@ -607,7 +607,9 @@ public class NodeMap : MonoBehaviour
             //if we still don't have this path,
             if(!cacheMap.ContainsKey(key)){
                 Debug.Log("No Path Exists between {0} and {1}");//, start.ReturnLocation(), end.ReturnLocation());
-                //how about we add this key, then? Though it should've been able to do it anyway.
+                //we then do what the original trace path does, and find the next closest node to explore.
+
+                //we'll hang on to this for now.
                 return TracePath(startingPos, endingPos);
             }
         }

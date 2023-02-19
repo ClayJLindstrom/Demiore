@@ -16,6 +16,8 @@ public class DDogLeader : DemiDogScript
     private List<DemiDogScript> followers;
     private Object theDogs;
 	private int followerCount;
+	//for helping the dogs get close enough to a node before moving to the next one
+	private float closeEnough = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -85,7 +87,7 @@ public class DDogLeader : DemiDogScript
 			{
 				//Debug.Log("Following Path!");
 				//here we go!
-				if (Vector2.Distance(transform.position, currentPath[currentPath.Count - 1]) < 0.1f)
+				if (Vector2.Distance(transform.position, currentPath[currentPath.Count - 1]) < closeEnough)
 				{
 					currentPath.Remove(currentPath[currentPath.Count - 1]);
 				}
