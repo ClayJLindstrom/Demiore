@@ -15,7 +15,7 @@ public class TownManager : GameManager
 	void Start()
 	{
 		//building nodemap
-		nodeMap = new NodeMap(Vector2.zero, 10, 10, 10, 10);
+		//nodeMap = new NodeMap(new Vector2(7.5f,9.2f), 14, 14, 10, 10);
 		torch0 = gameObject.transform.Find("TorchTower").transform.Find("VillageSprites1_4").GetComponent<Animator>();
 		torch1 = gameObject.transform.Find("TorchTower (1)").transform.Find("VillageSprites1_4").GetComponent<Animator>();
 		torch2 = gameObject.transform.Find("TorchTower (2)").transform.Find("VillageSprites1_4").GetComponent<Animator>();

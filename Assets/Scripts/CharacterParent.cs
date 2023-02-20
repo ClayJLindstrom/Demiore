@@ -55,13 +55,13 @@ public class CharacterParent : MonoBehaviour {
 	}
 	public void CorrectRectZ()
 	{
-		if (rb2d.velocity != Vector2.zero)
-		{
-			Vector3 newPose = rectTransform.position;
-			//we'll have the z-axis be equal to 10% the y-axis.
-			newPose.z = newPose.y / 10;
-			rectTransform.position = newPose;
-		}
+		//if (rb2d.velocity != Vector2.zero)
+		//{
+		Vector3 newPose = rectTransform.position;
+		//we'll have the z-axis be equal to 10% the y-axis.
+		newPose.z = newPose.y / 10;
+		rectTransform.position = newPose;
+		//}
 	}
 
 	public virtual void SlowDown(float multiplier)

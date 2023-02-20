@@ -61,7 +61,8 @@ public class NodeMap : MonoBehaviour
             location = loc;
             weight = 0;
             parent = null;
-            theMarker = (GameObject)Instantiate(marker, loc, Quaternion.identity);
+            
+            //theMarker = (GameObject)Instantiate(marker, loc, Quaternion.identity);//for testing
         }
         //edges
         public void AddEdge(Neighbor new_neighbor)
@@ -139,7 +140,7 @@ public class NodeMap : MonoBehaviour
             one.AddEdge(new Neighbor(two, Vector2.Distance(one.ReturnLocation(), two.ReturnLocation())));
             //In theory, we would want it going both ways, but with how the code works, it just duplicates in bridges.
             //two.AddEdge(new Neighbor(one, Vector2.Distance(one.ReturnLocation(), two.ReturnLocation())));
-            theEdge = (GameObject)Instantiate(edge, (one.ReturnLocation() + two.ReturnLocation())/2, Quaternion.identity);
+            //theEdge = (GameObject)Instantiate(edge, (one.ReturnLocation() + two.ReturnLocation())/2, Quaternion.identity);//for testing
         }
     }
 
@@ -593,7 +594,7 @@ public class NodeMap : MonoBehaviour
         //Debug.Log(current.ReturnLocation());
         Node end = FindClosest(endingPos);
         //Debug.Log(end.ReturnLocation());
-        bool needToReverse = false;
+        //bool needToReverse = false;
         //for our final path.
         List<Vector2> path = new List<Vector2>();
         string key = start.ReturnLocation().x.ToString()+"."+start.ReturnLocation().y.ToString()+"."+
@@ -603,7 +604,7 @@ public class NodeMap : MonoBehaviour
             //switch the start-end positions
             key = end.ReturnLocation().x.ToString()+"."+end.ReturnLocation().y.ToString()+"."+
                 start.ReturnLocation().x.ToString()+"."+start.ReturnLocation().y.ToString();
-            needToReverse = true;
+            //needToReverse = true;
             //if we still don't have this path,
             if(!cacheMap.ContainsKey(key)){
                 Debug.Log("No Path Exists between {0} and {1}");//, start.ReturnLocation(), end.ReturnLocation());
@@ -619,7 +620,7 @@ public class NodeMap : MonoBehaviour
             path.Add(place);
         }
         //if we need to reverse the path
-        if(needToReverse){
+        if(Vector2.Distance(startingPos, end.ReturnLocation()) < Vector2.Distance(startingPos, start.ReturnLocation())){
             path.Reverse();
         }
 

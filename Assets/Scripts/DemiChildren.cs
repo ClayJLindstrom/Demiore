@@ -12,9 +12,13 @@ public class DemiChildren : CharacterParent {
 	
 	public bool talking;
 
+	//for helping us know where we face
+	private Vector2 facingTowards = Vector2.zero;
+
 	// Use this for initialization
 	void Start () {
-		//transform = GetComponent<Transform>();
+		transform = GetComponent<Transform>();
+		//rb2d = GetComponent<Rigidbody2D>(); //Does not exist for the children!
 		rectTransform = GetComponent<RectTransform>();
 		reu = GameObject.Find("Reu").GetComponent<Transform>();
 		anime = GetComponentInChildren<Animator>();
@@ -68,13 +72,28 @@ public class DemiChildren : CharacterParent {
 				else if(transform.position.z > reu.position.z){health = 2;}//down
 			}
 		}
-		if(health < 0){health = 3;}
+		/*if(health < 0){health = 3;}
 		if(health > 3){health = 0;}
 		//health represents direction. N = 0, E = 1, etc.
 		if(health == 0){anime.SetInteger("Direction", 2);}//North
 		if(health == 1){facingRight = true; anime.SetInteger("Direction", 0);}//East
 		if(health == 2){anime.SetInteger("Direction", 1);}//South
-		if(health == 3){facingRight = false; anime.SetInteger("Direction", 0);}//West
+		if(health == 3){facingRight = false; anime.SetInteger("Direction", 0);}//West*/
+		//instead of having the character's turn at random, we will have them always facing Reu!
+		facingTowards = reu.position - transform.position;
+		//if he's to the right or left,
+		if(Mathf.Abs(facingTowards.x) > Mathf.Abs(facingTowards.y)){
+			anime.SetInteger("Direction", 0);//East/West
+			//if he's at the right, face right. 
+			if(facingTowards.x > 0){facingRight = true;}
+			else{facingRight = false;}
+		}
+		//otherwise,
+		else{
+			//if he's above us, look up
+			if(facingTowards.y > 0){anime.SetInteger("Direction", 2);}//North
+			else{anime.SetInteger("Direction", 1);}//South
+		}
 	}
 	
 	void FixedUpdate(){
@@ -83,6 +102,7 @@ public class DemiChildren : CharacterParent {
 		if(transform.localScale.x < 0 && facingRight){Flip();}
 	}
 	
+	//for always looking at Reu!
 	
 	public void Respond(){
 		if(!talking){
